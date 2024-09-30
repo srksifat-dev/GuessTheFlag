@@ -14,6 +14,8 @@ struct ContentView: View {
     @State private var correctAnswer:Int = Int.random(in: 1...2)
     @State private var questionAnswered: Double = 0
     @State private var score:Int = 0
+    @State private var correct: Int = 0
+    @State private var incorrect: Int = 0
     var body: some View {
         ZStack{
             LinearGradient(colors: [.blue, .black], startPoint: .topLeading, endPoint: .bottomTrailing)
@@ -65,7 +67,10 @@ struct ContentView: View {
         .alert("Game is over!", isPresented: $scoreShowing){
             Button("Reset",action: reset)
         }message: {
-            Text("Your score is \(score)")
+                Text("Your score is \(score) (✅ +\(correct) ⛔️ -\(incorrect))")
+                
+            
+            
         }
         .ignoresSafeArea()
     }
@@ -73,6 +78,7 @@ struct ContentView: View {
             if number == correctAnswer{
                 score += 1
                 questionAnswered += 1
+                correct += 1
                 if questionAnswered == 8{
                     scoreShowing = true
                 }else{
@@ -82,6 +88,7 @@ struct ContentView: View {
             }else{
                 score -= 1
                 questionAnswered += 1
+                incorrect += 1
                 if questionAnswered == 8{
                     scoreShowing = true
                 }else{
