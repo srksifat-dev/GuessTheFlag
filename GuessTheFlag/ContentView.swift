@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var scoreShowing: Bool = false
     @State private var alertTitle: String = ""
     @State private var correctAnswer:Int = Int.random(in: 1...2)
+    @State private var questionAnswered: Double = 0
     @State private var score:Int = 0
     var body: some View {
         ZStack{
@@ -47,33 +48,57 @@ struct ContentView: View {
                 .background(.ultraThinMaterial)
                 .clipShape(.rect(cornerRadius: 16))
                 Spacer()
-                Text("Score: \(score)")
-                    .font(.title.weight(.semibold))
-                    .foregroundColor(.white)
+                ProgressView(value: questionAnswered, total:8.0)
+                    .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+                                    
+                HStack{
+                    Text("0")
+                        .foregroundColor(.white)
+                    Spacer()
+                    Text("8")
+                        .foregroundColor(.white)
+                }
                 Spacer()
             }
             .padding(.horizontal,16)
         }
-        .alert(alertTitle, isPresented: $scoreShowing){
-            Button("Continue",action: askQuestion)
+        .alert("Game is over!", isPresented: $scoreShowing){
+            Button("Reset",action: reset)
         }message: {
             Text("Your score is \(score)")
         }
         .ignoresSafeArea()
     }
     func flagTapped(_ number:Int){
-        if number == correctAnswer{
-            alertTitle = "Correct!"
-            score += 1
-        }else{
-            alertTitle = "Wrong!"
-            score -= 1
-        }
-        scoreShowing = true
+            if number == correctAnswer{
+                score += 1
+                questionAnswered += 1
+                if questionAnswered == 8{
+                    scoreShowing = true
+                }else{
+                    askQuestion()
+                }
+                
+            }else{
+                score -= 1
+                questionAnswered += 1
+                if questionAnswered == 8{
+                    scoreShowing = true
+                }else{
+                    askQuestion()
+                }
+                
+            }
+            
     }
     func askQuestion(){
         countries = countries.shuffled()
         correctAnswer = Int.random(in: 0..<3)
+    }
+    func reset(){
+        questionAnswered = 0
+        score = 0
+        askQuestion()
     }
 }
 
